@@ -58,6 +58,9 @@ func (m *rmap) Del(keys ...string) error {
 func (m *rmap) Keys() []string {
 	var result []string
 	_ = m.client.Do(radix.Cmd(&result, "HKEYS", m.key))
+	if result == nil {
+		result = []string{}
+	}
 	return result
 }
 func (m *rmap) Entries() []Entry {
@@ -155,6 +158,9 @@ func (m *rcachemap) Keys() []string {
 	var result []string
 	for k := range m.cache {
 		result = append(result, k)
+	}
+	if result == nil {
+		result = []string{}
 	}
 	return result
 }
