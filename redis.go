@@ -1,11 +1,10 @@
-package api
+package redisson
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
-	"github.com/slink-go/redisson/collection"
 	"time"
 )
 
@@ -44,10 +43,10 @@ type Redis interface {
 
 	// wrappers
 
-	RMap(key string) collection.RMap
-	RCacheMap(key string) (collection.RCacheMap, error)
-	RList(key string) collection.RList
-	RSet(key string) collection.RSet
+	RMap(key string) RMap
+	RCacheMap(key string) (RCacheMap, error)
+	RList(key string) RList
+	RSet(key string) RSet
 }
 
 type redis struct {
@@ -184,17 +183,17 @@ func (r *redis) PubSub() (conn radix.PubSubConn, err error) {
 // endregion
 // region - wrappers
 
-func (r *redis) RMap(key string) collection.RMap {
-	return collection.NewRMap(key, r)
+func (r *redis) RMap(key string) RMap {
+	return NewRMap(key, r)
 }
-func (r *redis) RList(key string) collection.RList {
-	return collection.NewRList(key, r)
+func (r *redis) RList(key string) RList {
+	return NewRList(key, r)
 }
-func (r *redis) RCacheMap(key string) (collection.RCacheMap, error) {
-	return collection.NewRCacheMap(key, r)
+func (r *redis) RCacheMap(key string) (RCacheMap, error) {
+	return NewRCacheMap(key, r)
 }
-func (r *redis) RSet(key string) collection.RSet {
-	return collection.NewRSet(key, r)
+func (r *redis) RSet(key string) RSet {
+	return NewRSet(key, r)
 }
 
 // endregion

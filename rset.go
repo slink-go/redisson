@@ -1,20 +1,18 @@
-package collection
-
-import "github.com/slink-go/redisson/api"
+package redisson
 
 type RSet interface {
 	Add(value any) error
 	Has(value any) (bool, error)
 	Del(keys ...any) error
-	Items() []api.Value
+	Items() []Value
 }
 
 type rset struct {
-	client api.Redis
+	client Redis
 	key    string
 }
 
-func NewRSet(key string, client api.Redis) RSet {
+func NewRSet(key string, client Redis) RSet {
 	return &rset{
 		client: client,
 		key:    key,
@@ -30,6 +28,6 @@ func (s *rset) Has(value any) (bool, error) {
 func (s *rset) Del(keys ...any) error {
 	return nil
 }
-func (s *rset) Items() []api.Value {
+func (s *rset) Items() []Value {
 	return nil
 }

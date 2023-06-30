@@ -1,4 +1,4 @@
-package api
+package redisson
 
 type Logger interface {
 	Debug(message string, args ...interface{})
