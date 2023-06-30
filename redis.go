@@ -138,37 +138,49 @@ func (r *redis) Decr(key string) (int, error) {
 
 func (r *redis) PubSub() (conn radix.PubSubConn, err error) {
 	if r.single != nil {
-		conn, err = (radix.PersistentPubSubConnConfig{}).New(r.defaultContext(), func() (string, string, error) {
-			return r.single.Addr().Network(), r.single.Addr().String(), nil
-		})
+		return r.singlePubSub()
 	} else if r.cluster != nil {
-		conn, err = (radix.PersistentPubSubConnConfig{}).New(r.defaultContext(), func() (string, string, error) {
-			clients, err := r.cluster.Clients()
-			if err != nil {
-				return "", "", err
-			}
-			for addr := range clients {
-				return "tcp", addr, nil
-			}
-			return "", "", errors.New("no clients in the cluster")
-		})
-		if err != nil {
-			return nil, err
-		}
+		return r.clusterPubSub()
 	} else if r.sentinel != nil {
-		conn, err = (radix.PersistentPubSubConnConfig{}).New(r.defaultContext(), func() (string, string, error) {
-			clients, err := r.sentinel.Clients()
-			if err != nil {
-				return "", "", err
-			}
-			for addr := range clients {
-				return "tcp", addr, nil
-			}
-			return "", "", errors.New("no clients in the sentinel group")
-		})
+		return r.sentinelPubSub()
+	}
+	return
+}
+func (r *redis) singlePubSub() (conn radix.PubSubConn, err error) {
+	conn, err = (radix.PersistentPubSubConnConfig{}).New(r.defaultContext(), func() (string, string, error) {
+		return r.single.Addr().Network(), r.single.Addr().String(), nil
+	})
+	return
+}
+func (r *redis) clusterPubSub() (conn radix.PubSubConn, err error) {
+	conn, err = (radix.PersistentPubSubConnConfig{}).New(r.defaultContext(), func() (string, string, error) {
+		clients, err := r.cluster.Clients()
 		if err != nil {
-			return nil, err
+			return "", "", err
 		}
+		for addr := range clients {
+			return "tcp", addr, nil
+		}
+		return "", "", errors.New("no clients in the cluster")
+	})
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+func (r *redis) sentinelPubSub() (conn radix.PubSubConn, err error) {
+	conn, err = (radix.PersistentPubSubConnConfig{}).New(r.defaultContext(), func() (string, string, error) {
+		clients, err := r.sentinel.Clients()
+		if err != nil {
+			return "", "", err
+		}
+		for addr := range clients {
+			return "tcp", addr, nil
+		}
+		return "", "", errors.New("no clients in the sentinel group")
+	})
+	if err != nil {
+		return nil, err
 	}
 	return
 }
