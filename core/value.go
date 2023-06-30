@@ -1,23 +1,14 @@
-package redisson
+package core
 
 import (
 	"fmt"
+	"github.com/slink-go/redisson/api"
 	"math"
 	"strconv"
 	"strings"
 )
 
-type Value interface {
-	IsEmpty() bool
-	String() string
-	V() any
-	AsString() string
-	AsInt() int
-	AsFloat() float64
-	AsBool() bool
-}
-
-func NewValue(value any) Value {
+func NewValue(value any) api.Value {
 	return &redisValue{
 		value: value,
 	}

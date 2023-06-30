@@ -1,59 +1,22 @@
-package redisson
+package core
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/slink-go/redisson/api"
+	"github.com/slink-go/redisson/stack"
 	"time"
 )
 
 var ErrRedisClientNotInitialized = errors.New("redis client is not initialized")
 
-type Redis interface {
-	Logger
-
-	Close() error
-
-	// helpers
-
-	AnyArgs(key string, args ...any) []string
-	StrArgs(key string, args ...string) []string
-	Do(cmd radix.Action) error
-
-	// common
-
-	Del(keys ...string) (int, error)
-	Expire(key string, ttl time.Duration) (int, error)
-	Exists(key ...string) bool
-	Keys(filter string) []string
-	Touch(keys ...string)
-	Type(key string) string
-
-	// basic
-
-	Set(key string, value any) error
-	Get(key string) (Value, error)
-	Incr(key string) (int, error)
-	Decr(key string) (int, error)
-
-	// pub / sub
-
-	PubSub() (radix.PubSubConn, error)
-
-	// wrappers
-
-	RMap(key string) RMap
-	RCacheMap(key string) (RCacheMap, error)
-	RList(key string) RList
-	RSet(key string) RSet
-}
-
 type redis struct {
 	single   radix.Client
 	sentinel *radix.Sentinel
 	cluster  *radix.Cluster
-	logger   Logger
+	logger   api.Logger
 }
 
 // region - redis
@@ -115,7 +78,7 @@ func (r *redis) Type(key string) string {
 func (r *redis) Set(key string, value any) error {
 	return r.Do(radix.Cmd(nil, "SET", key, fmt.Sprintf("%v", value)))
 }
-func (r *redis) Get(key string) (Value, error) {
+func (r *redis) Get(key string) (api.Value, error) {
 	var data string
 	var err = r.Do(radix.Cmd(&data, "GET", key))
 	return &redisValue{
@@ -188,17 +151,53 @@ func (r *redis) sentinelPubSub() (conn radix.PubSubConn, err error) {
 // endregion
 // region - wrappers
 
-func (r *redis) RMap(key string) RMap {
+func (r *redis) RMap(key string) api.RMap {
 	return NewRMap(key, r)
 }
-func (r *redis) RCacheMap(key string) (RCacheMap, error) {
+func (r *redis) RCacheMap(key string) (api.RCacheMap, error) {
 	return NewRCacheMap(key, r)
 }
-func (r *redis) RList(key string) RList {
+func (r *redis) RList(key string) api.RList {
 	return NewRList(key, r)
 }
-func (r *redis) RSet(key string) RSet {
+func (r *redis) RSet(key string) api.RSet {
 	return NewRSet(key, r)
+}
+
+// endregion
+// region - stack
+
+func (r *redis) RBloomFilter(key string) stack.RBloomFilter {
+	return stack.NewRBloomFilter(key, r)
+}
+
+// endregion
+// region - logger
+
+func (r *redis) Debug(message string, args ...interface{}) {
+	if r.logger != nil {
+		r.logger.Debug(message, args...)
+	}
+}
+func (r *redis) Notice(message string, args ...interface{}) {
+	if r.logger != nil {
+		r.logger.Notice(message, args...)
+	}
+}
+func (r *redis) Info(message string, args ...interface{}) {
+	if r.logger != nil {
+		r.logger.Info(message, args...)
+	}
+}
+func (r *redis) Warning(message string, args ...interface{}) {
+	if r.logger != nil {
+		r.logger.Warning(message, args...)
+	}
+}
+func (r *redis) Error(message string, args ...interface{}) {
+	if r.logger != nil {
+		r.logger.Error(message, args...)
+	}
 }
 
 // endregion

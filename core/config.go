@@ -1,9 +1,10 @@
-package redisson
+package core
 
 import (
 	"context"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/slink-go/redisson/api"
 	"time"
 )
 
@@ -19,7 +20,7 @@ type config struct {
 	pingInterval time.Duration
 	user         string
 	password     string
-	logger       Logger
+	logger       api.Logger
 }
 
 func NewConfig() *config {
@@ -28,7 +29,7 @@ func NewConfig() *config {
 		pingInterval: defaultPingInterval,
 	}
 }
-func (c *config) WithLogger(logger Logger) *config {
+func (c *config) WithLogger(logger api.Logger) *config {
 	c.logger = logger
 	return c
 }
@@ -54,7 +55,7 @@ func (c *config) WithAuth(user, password string) *config {
 	return c
 }
 
-func (c *config) NewSingle(addr string) (Redis, error) {
+func (c *config) NewSingle(addr string) (api.Redis, error) {
 	client, err := (radix.PoolConfig{
 		Size:         c.poolSize,
 		PingInterval: c.pingInterval,
@@ -73,7 +74,7 @@ func (c *config) NewSingle(addr string) (Redis, error) {
 		logger: c.logger,
 	}, nil
 }
-func (c *config) NewCluster(addr ...string) (Redis, error) {
+func (c *config) NewCluster(addr ...string) (api.Redis, error) {
 	cfg := radix.ClusterConfig{
 		PoolConfig: radix.PoolConfig{
 			Size:         c.poolSize,
@@ -95,7 +96,7 @@ func (c *config) NewCluster(addr ...string) (Redis, error) {
 		logger:  c.logger,
 	}, err
 }
-func (c *config) NewSentinel(name string, addr ...string) (Redis, error) {
+func (c *config) NewSentinel(name string, addr ...string) (api.Redis, error) {
 	cfg := radix.SentinelConfig{
 		PoolConfig: radix.PoolConfig{
 			Size:         c.poolSize,

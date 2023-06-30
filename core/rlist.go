@@ -1,33 +1,12 @@
-package redisson
+package core
 
 import (
 	"github.com/mediocregopher/radix/v4"
+	"github.com/slink-go/redisson/api"
 	"reflect"
 )
 
-type RList interface {
-
-	// Len returns length of a list
-	Len() int
-
-	// LPush adds items to list tail in given order
-	LPush(items ...any) error
-
-	// LPushRO adds items to list tail in reversed order
-	//       i.e. first item in passed list will be added last
-	LPushRO(items ...any) error
-
-	// LPop get item from list tail
-	LPop() (Value, error)
-
-	// RPush adds items to list head in given order
-	RPush(items ...any) error
-
-	// RPop get item from list head
-	RPop() (Value, error)
-}
-
-func NewRList(key string, client Redis) RList {
+func NewRList(key string, client api.Redis) api.RList {
 	return &rlist{
 		client: client,
 		key:    key,
@@ -35,7 +14,7 @@ func NewRList(key string, client Redis) RList {
 }
 
 type rlist struct {
-	client Redis
+	client api.Redis
 	key    string
 }
 
@@ -53,7 +32,7 @@ func (l *rlist) LPushRO(items ...any) error {
 	ReverseSlice(i2)
 	return l.client.Do(radix.Cmd(nil, "LPUSH", l.client.AnyArgs(l.key, i2...)...))
 }
-func (l *rlist) LPop() (Value, error) {
+func (l *rlist) LPop() (api.Value, error) {
 	var value string
 	err := l.client.Do(radix.Cmd(&value, "LPOP", l.key))
 	return NewValue(value), err
@@ -61,7 +40,7 @@ func (l *rlist) LPop() (Value, error) {
 func (l *rlist) RPush(items ...any) error {
 	return l.client.Do(radix.Cmd(nil, "RPUSH", l.client.AnyArgs(l.key, items...)...))
 }
-func (l *rlist) RPop() (Value, error) {
+func (l *rlist) RPop() (api.Value, error) {
 	var value string
 	err := l.client.Do(radix.Cmd(&value, "RPOP", l.key))
 	return NewValue(value), err

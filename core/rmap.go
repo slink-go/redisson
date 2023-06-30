@@ -1,33 +1,21 @@
-package redisson
+package core
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
+	"github.com/slink-go/redisson/api"
 	"sync"
 	"time"
 )
 
 // region - map entry
 
-type Entry struct {
-	Key   string
-	Value Value
-}
-
 // endregion
 // region - RMap
 
-type RMap interface {
-	Set(key string, value any) error
-	Get(key string) (Value, bool)
-	Del(keys ...string) error
-	Keys() []string
-	Entries() []Entry
-}
-
-func NewRMap(key string, client Redis) RMap {
+func NewRMap(key string, client api.Redis) api.RMap {
 	return &rmap{
 		client: client,
 		key:    key,
@@ -35,14 +23,14 @@ func NewRMap(key string, client Redis) RMap {
 }
 
 type rmap struct {
-	client Redis
+	client api.Redis
 	key    string
 }
 
 func (m *rmap) Set(key string, value any) error {
 	return m.client.Do(radix.Cmd(nil, "HSET", m.key, key, fmt.Sprintf("%v", value)))
 }
-func (m *rmap) Get(key string) (Value, bool) {
+func (m *rmap) Get(key string) (api.Value, bool) {
 	var value string
 	var ok = true
 	err := m.client.Do(radix.Cmd(&value, "HGET", m.key, key))
@@ -63,12 +51,12 @@ func (m *rmap) Keys() []string {
 	}
 	return result
 }
-func (m *rmap) Entries() []Entry {
+func (m *rmap) Entries() []api.Entry {
 	var result map[string]string
 	_ = m.client.Do(radix.Cmd(&result, "HGETALL", m.key))
-	var values []Entry
+	var values []api.Entry
 	for k, v := range result {
-		values = append(values, Entry{
+		values = append(values, api.Entry{
 			Key:   k,
 			Value: NewValue(v),
 		})
@@ -92,29 +80,24 @@ const (
 	syncComplete
 )
 
-type RCacheMap interface {
-	RMap
-	Destroy()
-}
-
 type rcachemap struct {
-	client    Redis
+	client    api.Redis
 	key       string
 	rwMutex   sync.RWMutex
 	syncMutex sync.RWMutex
 	syncState syncState
-	cache     map[string]Value
+	cache     map[string]api.Value
 	redisChn  chan radix.PubSubMessage
 	doneChn   chan *struct{}
 	psconn    radix.PubSubConn
 }
 
-func NewRCacheMap(key string, client Redis) (RCacheMap, error) {
+func NewRCacheMap(key string, client api.Redis) (api.RCacheMap, error) {
 	m := &rcachemap{
 		client:    client,
 		key:       key,
 		syncState: syncNeeded,
-		cache:     make(map[string]Value),
+		cache:     make(map[string]api.Value),
 		redisChn:  make(chan radix.PubSubMessage, 1),
 		doneChn:   make(chan *struct{}, 1),
 	}
@@ -135,7 +118,7 @@ func (m *rcachemap) Set(key string, value any) error {
 	m.client.Debug("+ set end: %s %d", key, m.syncState)
 	return err
 }
-func (m *rcachemap) Get(key string) (Value, bool) {
+func (m *rcachemap) Get(key string) (api.Value, bool) {
 	m.wait()
 	m.rwMutex.RLock()
 	defer m.rwMutex.RUnlock()
@@ -164,13 +147,13 @@ func (m *rcachemap) Keys() []string {
 	}
 	return result
 }
-func (m *rcachemap) Entries() []Entry {
+func (m *rcachemap) Entries() []api.Entry {
 	m.wait()
 	m.rwMutex.RLock()
 	defer m.rwMutex.RUnlock()
-	var result []Entry
+	var result []api.Entry
 	for k, v := range m.cache {
-		result = append(result, Entry{
+		result = append(result, api.Entry{
 			Key:   k,
 			Value: v,
 		})
@@ -244,7 +227,7 @@ func (m *rcachemap) sync() {
 	if err != nil {
 		m.client.Warning("sync keys error: %s", err.Error())
 	} else {
-		m.cache = make(map[string]Value)
+		m.cache = make(map[string]api.Value)
 		for _, key := range keys {
 			var value string
 			err := m.client.Do(radix.Cmd(&value, "HGET", m.key, key))

@@ -1,7 +1,8 @@
-package redisson
+package core
 
 import (
 	"fmt"
+	"github.com/slink-go/redisson/api"
 	"github.com/stvp/tempredis"
 	"os"
 	"strconv"
@@ -16,7 +17,7 @@ var server *tempredis.Server
 
 func TestMain(m *testing.M) {
 	var err error
-	os.Remove("dump.rdb")
+	_ = os.Remove("dump.rdb")
 	server, err = tempredis.Start(tempredis.Config{
 		"port": strconv.Itoa(testServerPort),
 	})
@@ -28,7 +29,7 @@ func TestMain(m *testing.M) {
 	os.Exit(result)
 }
 
-func createClient() (Redis, error) {
+func createClient() (api.Redis, error) {
 	return NewConfig().
 		WithName("TEST-SINGLE-CLIENT").
 		WithDb(0).
@@ -51,7 +52,7 @@ func TestSetGetDelete(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 	err = r.Set("TEST_KEY", "TEST_VALUE")
@@ -85,7 +86,7 @@ func TestExistsExpireDelete(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
@@ -147,7 +148,7 @@ func TestIncrDecrDelete(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
@@ -204,7 +205,7 @@ func TestKeys(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
@@ -216,8 +217,8 @@ func TestKeys(t *testing.T) {
 		t.Errorf("expected empty array")
 	}
 
-	r.Set("TEST_KEY_1", "TEST_VALUE_1")
-	r.Set("TEST_KEY_2", "TEST_VALUE_2")
+	_ = r.Set("TEST_KEY_1", "TEST_VALUE_1")
+	_ = r.Set("TEST_KEY_2", "TEST_VALUE_2")
 
 	keys = r.Keys("")
 	if keys == nil {
@@ -245,10 +246,10 @@ func TestType(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
-	r.Set("TEST_KEY", "TEST_VALUE")
+	_ = r.Set("TEST_KEY", "TEST_VALUE")
 	tp := r.Type("TEST_KEY")
 	if tp == "" {
 		t.Errorf("expected non-empty value")
@@ -263,7 +264,7 @@ func TestAnyArgs(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
@@ -289,7 +290,7 @@ func TestStrArgs(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 

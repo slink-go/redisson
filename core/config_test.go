@@ -1,4 +1,4 @@
-package redisson
+package core
 
 import (
 	"testing"

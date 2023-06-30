@@ -1,6 +1,9 @@
-package redisson
+package core
 
-import "testing"
+import (
+	"github.com/slink-go/redisson/api"
+	"testing"
+)
 
 func TestRListL(t *testing.T) {
 
@@ -8,17 +11,17 @@ func TestRListL(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	l := r.RList("TEST_LIST")
+	l := NewRList("TEST_LIST", r)
 
 	if l.Len() != 0 {
 		t.Errorf("expected 0, received %d", l.Len())
 	}
 
-	l.LPush(true, 1, "two")
+	_ = l.LPush(true, 1, "two")
 
 	if l.Len() != 3 {
 		t.Errorf("expected 3, received %d", l.Len())
@@ -57,17 +60,17 @@ func TestRListR(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	l := r.RList("TEST_LIST")
+	l := NewRList("TEST_LIST", r)
 
 	if l.Len() != 0 {
 		t.Errorf("expected 0, received %d", l.Len())
 	}
 
-	l.RPush(true, 1, "two")
+	_ = l.RPush(true, 1, "two")
 
 	if l.Len() != 3 {
 		t.Errorf("expected 3, received %d", l.Len())
@@ -105,18 +108,18 @@ func TestRListLRO(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	l := r.RList("TEST_LIST")
+	l := NewRList("TEST_LIST", r)
 
 	if l.Len() != 0 {
 		t.Errorf("expected 0, received %d", l.Len())
 	}
 
 	arr := []any{true, 1, "two"}
-	l.LPushRO(arr...)
+	_ = l.LPushRO(arr...)
 
 	if l.Len() != 3 {
 		t.Errorf("expected 3, received %d", l.Len())

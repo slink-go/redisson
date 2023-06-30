@@ -1,6 +1,7 @@
-package redisson
+package core
 
 import (
+	"github.com/slink-go/redisson/api"
 	"testing"
 )
 
@@ -10,11 +11,11 @@ func TestRSet(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	s := r.RSet("TEST_SET")
+	s := NewRSet("TEST_SET", r)
 
 	if s.Size() != 0 {
 		t.Errorf("expected 0, received %d", s.Size())

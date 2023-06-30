@@ -1,7 +1,8 @@
-package redisson
+package core
 
 import (
 	"fmt"
+	"github.com/slink-go/redisson/api"
 	"testing"
 )
 
@@ -11,11 +12,11 @@ func TestRMap(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	m := r.RMap("TEST_MAP")
+	m := NewRMap("TEST_MAP", r)
 	if m == nil {
 		t.Errorf("expected non-null value")
 	}
@@ -67,11 +68,11 @@ func TestRMapKeysEntries(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	m := r.RMap("TEST_MAP")
+	m := NewRMap("TEST_MAP", r)
 	if m == nil {
 		t.Errorf("expected non-null value")
 	}
@@ -118,7 +119,7 @@ func TestRMapKeysEntries(t *testing.T) {
 
 	_, _ = r.Del("TEST_MAP")
 
-	m = r.RMap("TEST_MAP_2")
+	m = NewRMap("TEST_MAP_2", r)
 	if m.Keys() == nil {
 		t.Error("expected non-null value")
 	}
@@ -126,18 +127,17 @@ func TestRMapKeysEntries(t *testing.T) {
 		t.Error("expected empty list")
 	}
 }
-
 func TestRCacheMap(t *testing.T) {
 
 	r, err := createClient()
 	if err != nil {
 		t.Error(err)
 	}
-	defer func(r Redis) {
+	defer func(r api.Redis) {
 		_ = r.Close()
 	}(r)
 
-	m, err := r.RCacheMap("TEST_CACHE_MAP")
+	m, err := NewRCacheMap("TEST_CACHE_MAP", r)
 	if err != nil {
 		t.Error(err)
 	}
