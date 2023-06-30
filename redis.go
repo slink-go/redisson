@@ -190,35 +190,6 @@ func (r *redis) RSet(key string) RSet {
 }
 
 // endregion
-// region - logger
-
-func (r *redis) Debug(message string, args ...interface{}) {
-	if r.logger != nil {
-		r.logger.Debug(message, args...)
-	}
-}
-func (r *redis) Notice(message string, args ...interface{}) {
-	if r.logger != nil {
-		r.logger.Notice(message, args...)
-	}
-}
-func (r *redis) Info(message string, args ...interface{}) {
-	if r.logger != nil {
-		r.logger.Info(message, args...)
-	}
-}
-func (r *redis) Warning(message string, args ...interface{}) {
-	if r.logger != nil {
-		r.logger.Warning(message, args...)
-	}
-}
-func (r *redis) Error(message string, args ...interface{}) {
-	if r.logger != nil {
-		r.logger.Error(message, args...)
-	}
-}
-
-// endregion
 // region - helpers
 
 func (r *redis) AnyArgs(key string, args ...any) []string {

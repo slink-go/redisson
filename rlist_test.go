@@ -2,7 +2,7 @@ package redisson
 
 import "testing"
 
-func TestListL(t *testing.T) {
+func TestRListL(t *testing.T) {
 
 	r, err := createClient()
 	if err != nil {
@@ -51,7 +51,7 @@ func TestListL(t *testing.T) {
 	_, _ = r.Del("TEST_LIST")
 
 }
-func TestListR(t *testing.T) {
+func TestRListR(t *testing.T) {
 
 	r, err := createClient()
 	if err != nil {
@@ -100,7 +100,7 @@ func TestListR(t *testing.T) {
 	_, _ = r.Del("TEST_LIST")
 
 }
-func TestListLRO(t *testing.T) {
+func TestRListLRO(t *testing.T) {
 	r, err := createClient()
 	if err != nil {
 		t.Error(err)
