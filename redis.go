@@ -173,24 +173,17 @@ func (r *redis) PubSub() (conn radix.PubSubConn, err error) {
 	return
 }
 
-//func (r *redis) Unsubscribe(key string) {
-//
-//}
-//func (r *redis) Publish(key string, value any) {
-//	r.Do(radix.Su)
-//}
-
 // endregion
 // region - wrappers
 
 func (r *redis) RMap(key string) RMap {
 	return NewRMap(key, r)
 }
-func (r *redis) RList(key string) RList {
-	return NewRList(key, r)
-}
 func (r *redis) RCacheMap(key string) (RCacheMap, error) {
 	return NewRCacheMap(key, r)
+}
+func (r *redis) RList(key string) RList {
+	return NewRList(key, r)
 }
 func (r *redis) RSet(key string) RSet {
 	return NewRSet(key, r)
