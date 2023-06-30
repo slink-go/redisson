@@ -15,7 +15,7 @@ type Value interface {
 	AsBool() bool
 }
 
-type Entry struct {
+type MapEntry struct {
 	Key   string
 	Value Value
 }
@@ -53,7 +53,7 @@ type RMap interface {
 	Get(key string) (Value, bool)
 	Del(keys ...string) error
 	Keys() []string
-	Entries() []Entry
+	Entries() []MapEntry
 }
 type RCacheMap interface {
 	RMap
@@ -90,11 +90,4 @@ type Redis interface {
 	// pub / sub
 
 	PubSub() (radix.PubSubConn, error)
-
-	// wrappers
-
-	//RMap(key string) RMap
-	//RCacheMap(key string) (RCacheMap, error)
-	//RList(key string) RList
-	//RSet(key string) RSet
 }

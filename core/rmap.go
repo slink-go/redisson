@@ -51,12 +51,12 @@ func (m *rmap) Keys() []string {
 	}
 	return result
 }
-func (m *rmap) Entries() []api.Entry {
+func (m *rmap) Entries() []api.MapEntry {
 	var result map[string]string
 	_ = m.client.Do(radix.Cmd(&result, "HGETALL", m.key))
-	var values []api.Entry
+	var values []api.MapEntry
 	for k, v := range result {
-		values = append(values, api.Entry{
+		values = append(values, api.MapEntry{
 			Key:   k,
 			Value: NewValue(v),
 		})
@@ -147,13 +147,13 @@ func (m *rcachemap) Keys() []string {
 	}
 	return result
 }
-func (m *rcachemap) Entries() []api.Entry {
+func (m *rcachemap) Entries() []api.MapEntry {
 	m.wait()
 	m.rwMutex.RLock()
 	defer m.rwMutex.RUnlock()
-	var result []api.Entry
+	var result []api.MapEntry
 	for k, v := range m.cache {
-		result = append(result, api.Entry{
+		result = append(result, api.MapEntry{
 			Key:   k,
 			Value: v,
 		})
