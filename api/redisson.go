@@ -63,6 +63,10 @@ type RCacheMap interface {
 type Redis interface {
 	Logger
 
+	EnableKeyEventNotifications() error
+	EnableKeyEventNotificationsOfTypes(types string) error
+	DisableKeyEventNotifications() error
+
 	Close() error
 
 	// helpers

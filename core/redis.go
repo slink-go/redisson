@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
 	"github.com/slink-go/redisson/api"
-	"github.com/slink-go/redisson/stack"
 	"time"
 )
+
+const defaultKeyEventNotificationTypes = "KEAn"
 
 var ErrRedisClientNotInitialized = errors.New("redis client is not initialized")
 
@@ -39,6 +40,16 @@ func (r *redis) Close() error {
 
 // endregion
 // region - common
+
+func (r *redis) EnableKeyEventNotifications() error {
+	return r.EnableKeyEventNotificationsOfTypes(defaultKeyEventNotificationTypes)
+}
+func (r *redis) EnableKeyEventNotificationsOfTypes(types string) error {
+	return r.Do(radix.Cmd(nil, "config", "set", "notify-keyspace-events", types))
+}
+func (r *redis) DisableKeyEventNotifications() error {
+	return r.Do(radix.Cmd(nil, "config", "set", "notify-keyspace-events", ""))
+}
 
 func (r *redis) Del(keys ...string) (int, error) {
 	var amount int
@@ -162,13 +173,6 @@ func (r *redis) RList(key string) api.RList {
 }
 func (r *redis) RSet(key string) api.RSet {
 	return NewRSet(key, r)
-}
-
-// endregion
-// region - stack
-
-func (r *redis) RBloomFilter(key string) stack.RBloomFilter {
-	return stack.NewRBloomFilter(key, r)
 }
 
 // endregion

@@ -171,10 +171,7 @@ func (m *rcachemap) Destroy() {
 func (m *rcachemap) run() error {
 	m.client.Debug("starting RCacheMap background process for %s", m.key)
 	var err error
-	err = m.client.Do(radix.Cmd(nil, "config", "set", "notify-keyspace-events", "KEAn"))
-	if err != nil {
-		return err
-	}
+	// enable key event notification explicitly
 	m.psconn, err = m.client.PubSub()
 	if err != nil {
 		return err
