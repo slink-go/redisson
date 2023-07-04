@@ -48,6 +48,12 @@ type RSet interface {
 	Del(keys ...any) error
 	Items() []Value
 }
+type RBitSet interface {
+	Set(idx uint32, value any) (bool, error)
+	Get(idx uint32) (bool, error)
+	BitCount() int
+	BitCountRange(start, end int, unit string) (int, error)
+}
 type RMap interface {
 	Set(key string, value any) error
 	Get(key string) (Value, bool)

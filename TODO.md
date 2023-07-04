@@ -11,9 +11,10 @@
   + map
   + cache map
   + config: enable/disable keyspace notifications
-  - bitset
+  + bitset
   - sorted set
   - extend set support
+  - extend bitset support
   - extend list support
   - pub/sub
   - streams
