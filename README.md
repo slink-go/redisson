@@ -141,7 +141,7 @@ psconn, err = client.PubSub()
 if err != nil {
     return err
 }
-err = psconn.PSubscribe(context.Background(), fmt.Sprintf(keySpaceTopicFormat, m.key))
+err = psconn.PSubscribe(context.Background(), "subscription-topic")
 if err != nil {
     return err
 }
