@@ -57,7 +57,7 @@ type Value interface {
 Basically it's translated to string representation and stored as string.
 
 > __Warning__
-TODO: serializers for complex data structures still need to be implemented; 
+<br>TODO: serializers for complex data structures still need to be implemented; 
 for now only basic data types are supported:
 <br>- strings
 <br>- integer numbers
