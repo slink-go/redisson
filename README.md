@@ -56,12 +56,15 @@ type Value interface {
 ```
 Basically it's translated to string representation and stored as string.
 
-*$${\color{red}TODO}$$*: serializers for complex data structures still need to be implemented; 
+> __Warning__
+TODO: serializers for complex data structures still need to be implemented; 
 for now only basic data types are supported:
-- strings
-- integer numbers
-- real numbers
-- booleans
+<br>- strings
+<br>- integer numbers
+<br>- real numbers
+<br>- booleans
+
+
 ## Supported redis functions
 ### Keyspace event notifications
 Redis needs to be configured to send key-event notifications. 
