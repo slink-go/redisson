@@ -153,13 +153,12 @@ for {
 ```
 
 ## TODO
+```
 - binary data codec support
 - multi-node / multi-pool support
 
-
 - simplified pub-sub
 - streams
-
 
 - bloomfilter
 - cuckoofilter
@@ -170,7 +169,7 @@ for {
 - timeseries
 - topk
 
-
 - lock
 - rwlock
 - distributed locks with redlock
+```
