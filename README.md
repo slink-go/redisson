@@ -56,7 +56,7 @@ type Value interface {
 ```
 Basically it's translated to string representation and stored as string.
 
-*![#f03c15](TODO)*: serializers for complex data structures still need to be implemented; 
+*$${\color{red}TODO}$$*: serializers for complex data structures still need to be implemented; 
 for now only basic data types are supported:
 - strings
 - integer numbers
