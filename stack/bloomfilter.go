@@ -1,7 +1,7 @@
 package stack
 
 import (
-	"github.com/slink-go/redisson/api"
+	"go.slink.ws/redisson/api"
 )
 
 // https://redis.io/commands/?name=bf.

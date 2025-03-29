@@ -2,7 +2,7 @@ package core
 
 import (
 	"github.com/mediocregopher/radix/v4"
-	"github.com/slink-go/redisson/api"
+	"go.slink.ws/redisson/api"
 )
 
 type rset struct {

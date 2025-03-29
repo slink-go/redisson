@@ -2,8 +2,8 @@ package core
 
 import (
 	"fmt"
-	"github.com/slink-go/redisson/api"
 	"github.com/stvp/tempredis"
+	"go.slink.ws/redisson/api"
 	"os"
 	"strconv"
 	"testing"

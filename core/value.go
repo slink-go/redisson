@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"github.com/slink-go/redisson/api"
+	"go.slink.ws/redisson/api"
 	"math"
 	"strconv"
 	"strings"

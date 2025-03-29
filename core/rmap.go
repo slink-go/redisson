@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mediocregopher/radix/v4"
-	"github.com/slink-go/redisson/api"
+	"go.slink.ws/redisson/api"
 	"sync"
 	"time"
 )

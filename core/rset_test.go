@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/slink-go/redisson/api"
+	"go.slink.ws/redisson/api"
 	"testing"
 )
 
